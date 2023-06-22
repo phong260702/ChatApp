@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    display: grid;
+    place-items: center;
+    background-color: bisque;
+}
+
+.title {
+    margin: 5px;
+    padding-bottom: 30px;
+}
+
+.main {
+    border: 8px solid teal;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.name {
+    display: flex;
+    font-size: 32px;
+    font-weight: 700;
+    padding: 8px 16px;
+    background-color: rgba(128, 128, 128, 0.56);
+}
+
+.name > span {
+    color: rgba(50, 132, 139, 0.714);
+}
+
+.name-input {
+    font-size: 24px;
+    font-weight: 700;
+    color: rgb(82, 85, 85);
+    flex-grow: 1;
+    border: none;
+    margin: 0px 12px;
+    outline: none;
+    background-color: rgba(128, 128, 128, 0.56);
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(128, 128, 128, 0.56);
+    width: 450px;
+    height: 550px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.message-left, .message-feedback {
+    list-style: none;
+    padding: 8px 12px;
+    margin: 12px;
+    max-width: 250px;
+    font-size: 18px;
+    word-wrap: break-word;
+}
+
+.message-left {
+    border-radius: 20px 20px 20px 0;
+    align-self: flex-start;
+    background-color: rgba(128, 128, 128, 0.56);
+    box-shadow: -2px 2px 4px #dcdcdc;
+}
+
+.message-feedback {
+    border-radius: 20px 20px 0px 20px;
+    align-self: flex-end;
+    background-color: rgb(46, 122, 64);
+    box-shadow: #dcdcdc;
+    color: azure;
+}
+
+.message-left > span, .message-feedback > span {
+    display: block;
+    font-style: italic;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.feedback {
+    font-style: italic;
+    font-size: 14px;
+    padding: 16px;
+    color: black;
+    text-align: center;
+}
+
+.message-form {
+    display: flex;
+    justify-content: space-between;
+    width: 450px;
+}
+
+.message-input {
+    flex-grow: 1;
+    height: 48px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    padding: 0 12px;
+    background-color: #fff;
+}
+
+.send-button {
+    height: 48px;
+    font-size: 16px;
+    border: none;
+    padding: 0px 20px;
+    outline: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.v-divider {
+    height: 48px;
+    width: 2px;
+    background-color: #f6f6f6;
+}
+
+.client-total {
+    margin: 20px 0;
+    padding-top: 20px;
+    padding-bottom: 0;
+    color: #7e7e7e;
+}

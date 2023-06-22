@@ -6,46 +6,52 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="stylesheet" href="style.css" />
+
     <title>Chat</title>
   </head>
 
   <body>
-    <h1>ichat 💬</h1>
+    <h1 class="title">ichat 💬</h1>
 
-    <div>
+    <div class="main">
       <div class="name">
         <span><i class="far fa-user"></i></span>
         <input
           type="text"
           class="name-input"
           id="name-input"
-          value="None"
+          placeholder="Enter username"
+          value=""
           maxlength="20"
         />
       </div>
 
       <ul class="message-container">
         <li class="message-left">
-          <p class="message">
-            lorem impsun
-            <span>bluebird</span>
-          </p>
+          <p class="message">lorem impsun</p>
+          <span>bluebird</span>
         </li>
 
         <li class="message-feedback">
-          <p class="feedback">Someone is typing</p>
+          <p class="message">Someone is typing</p>
+          <span>you</span>
         </li>
+
+        <li class="feedback">Someone is typing</li>
       </ul>
 
       <form class="message-form">
-        <input type="text" name="message" id="message-input" />
+        <input type="text" name="message" class="message-input" />
         <div class="v-divider"></div>
         <button type="submit" class="send-button" id="send-button">
           send <span><i class="fas fa-paper-plane"></i></span>
         </button>
       </form>
-
-      <h3 class="client-total">Total Client: 2</h3>
     </div>
+    <h3 class="client-total">In Chat: 2</h3>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
