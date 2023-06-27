@@ -9,10 +9,27 @@ const server = app.listen(PORT, () => {
 });
 
 
-const io = require("socket.io")(server)
+let socketConnected = new Set();
+const io = require("socket.io")(server);
 
-app.use(express.static(path.join(__dirname, "public")))
 
-io.on("connection", (socket) => {
+app.use(express.static(path.join(__dirname, "public")));
+
+
+
+
+
+io.on("connection", onConnected);
+
+function onConnected(socket) {
     console.log(socket.id);
-})
+    socketConnected.add(socket.id);
+    io.emit('clients-total', socketConnected.size)
+
+    socket.on('disconnect', () => {
+        console.log("Socket disconnected: ", socket.id);
+        socketConnected.delete(socket.id);
+        io.emit("clients-total", socketConnected.size)
+    });
+
+};

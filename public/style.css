@@ -127,7 +127,7 @@ body {
     background-color: #f6f6f6;
 }
 
-.client-total {
+#client-total {
     margin: 20px 0;
     padding-top: 20px;
     padding-bottom: 0;
