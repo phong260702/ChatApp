@@ -27,7 +27,7 @@
         />
       </div>
 
-      <ul class="message-container">
+      <ul class="message-container" id="message-container">
         <li class="message-left">
           <p class="message">lorem impsun</p>
           <span>bluebird</span>
@@ -38,11 +38,17 @@
           <span>you</span>
         </li>
 
-        <li class="feedback">Someone is typing</li>
+        <li class="feedback" id="feedback"></li>
       </ul>
 
-      <form class="message-form">
-        <input type="text" name="message" class="message-input" />
+      <form class="message-form" id="message-form">
+        <input
+          type="text"
+          name="message"
+          class="message-input"
+          id="message-input"
+          value=""
+        />
         <div class="v-divider"></div>
         <button type="submit" class="send-button" id="send-button">
           send <span><i class="fas fa-paper-plane"></i></span>

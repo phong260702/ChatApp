@@ -16,9 +16,6 @@ const io = require("socket.io")(server);
 app.use(express.static(path.join(__dirname, "public")));
 
 
-
-
-
 io.on("connection", onConnected);
 
 function onConnected(socket) {
@@ -31,5 +28,14 @@ function onConnected(socket) {
         socketConnected.delete(socket.id);
         io.emit("clients-total", socketConnected.size)
     });
+
+    socket.on("message", (data) => {
+        console.log(data);
+        socket.broadcast.emit("chat-message", data)
+    });
+
+    // socket.on("feedback", (data) => {
+    //     socket.broadcast.emit("feedback", data);
+    // });
 
 };
