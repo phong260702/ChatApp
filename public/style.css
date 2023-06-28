@@ -87,8 +87,13 @@ body {
     margin-top: 4px;
 }
 
+.message-feedback > span {
+    text-align-last: end;
+}
+
 .feedback {
-    font-style: italic;
+    font-style: flex-end;
+    font-size: 300px;
     font-size: 14px;
     padding: 16px;
     color: black;
