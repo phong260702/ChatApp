@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 // Render Register Screen
 const registerLoad = async (req, res) => {
     try {
+        console.log(req.logins);
         res.render("register");
     } catch (error) {
         console.log(error.message);

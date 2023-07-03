@@ -6,6 +6,7 @@ const multer = require("multer");
 const userController = require("../control/user")
 const session = require("express-session");
 const user = require("../model/user");
+const auth = require("../middlewares/auth")
 require("dotenv").config();
 
 
@@ -29,16 +30,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Register route for user
-user_route.get('/register', userController.registerLoad);
+user_route.get('/register', auth.isLogout, userController.registerLoad);
 user_route.post('/register', upload.single("image"), userController.register);
 
 // Login route for user
-user_route.get("/", userController.loadLogin);
+user_route.get("/", auth.isLogout, userController.loadLogin);
 user_route.post("/", userController.login);
-user_route.get("/dashboard", userController.loadDashboard);
+user_route.get("/dashboard", auth.isLogin, userController.loadDashboard);
 
 // User logout
-user_route.get("/logout", userController.loadLogout);
+user_route.get("/logout", auth.isLogin, userController.loadLogout);
 
 user_route.get("*", () => {
     res.redirect("/");
