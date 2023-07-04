@@ -1,10 +1,12 @@
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
+const fs = require('fs')
+const { promisify } = require('util')
+const unlinkAsync = promisify(fs.unlink)
 
 // Render Register Screen
 const registerLoad = async (req, res) => {
     try {
-        console.log(req.logins);
         res.render("register");
     } catch (error) {
         console.log(error.message);
@@ -15,6 +17,14 @@ const registerLoad = async (req, res) => {
 const register = async (req, res) => {
     try {
         const passwordHash = await bcrypt.hash(req.body.password, 10);
+        email = req.body.email;
+        const userData = await User.findOne({ email: email });
+        if (userData) {
+            res.render("register", { message: 'Email exists' });
+            const imagePath = "public/images/" + req.file.filename;
+            await unlinkAsync(imagePath);
+            return;
+        }
         const user = new User({
             name: req.body.name,
             email: req.body.email,
@@ -69,7 +79,8 @@ const login = async (req, res) => {
 // Render Logout
 const loadDashboard = async (req, res) => {
     try {
-        res.render("dashboard", { user: req.session.user });
+        var users = await User.find({ _id: { $nin: [req.session.user._id] } })
+        res.render("dashboard", { user: req.session.user, users: users });
     } catch (error) {
         console.log(error.message);
     }
