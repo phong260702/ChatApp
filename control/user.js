@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const fs = require('fs')
 const { promisify } = require('util')
 const unlinkAsync = promisify(fs.unlink)
+const Chat = require('../model/chat')
 
 // Render Register Screen
 const registerLoad = async (req, res) => {
@@ -86,5 +87,19 @@ const loadDashboard = async (req, res) => {
     }
 }
 
+const saveChat = async (req, res) => {
+    try {
+        let chat = new Chat({
+            sender_id: req.body.sender_id,
+            receiver_id: req.body.receiver_id,
+            message: req.body.message,
+        });
+        const newChat = await chat.save();
+        res.status(200).send({ success: true, msg: "Chat Inserted", data: newChat })
 
-module.exports = { registerLoad, register, loadDashboard, loadLogin, loadLogout, login }
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message })
+    }
+}
+
+module.exports = { registerLoad, register, loadDashboard, loadLogin, loadLogout, login, saveChat }

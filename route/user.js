@@ -45,4 +45,6 @@ user_route.get("*", () => {
     res.redirect("/");
 })
 
+user_route.post("/save-chat", userController.saveChat);
+
 module.exports = user_route;

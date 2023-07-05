@@ -6,6 +6,7 @@ const http = require("http").Server(app);
 require("dotenv").config();
 const io = require("socket.io")(http);
 const User = require("./model/user");
+const Chat = require("./model/chat");
 const userRoute = require("./route/user");
 
 
@@ -28,6 +29,20 @@ usp.on("connection", async (socket) => {
         await User.findByIdAndUpdate({ _id: userId }, { $set: { is_online: '0' } });
         socket.broadcast.emit("getOffline", { user_id: userId });
         console.log(socket.id + " disconnect");
+    })
+
+    socket.on("newChat", (data) => {
+        socket.broadcast.emit("loadNewChat", data);
+    })
+
+    socket.on("existChat", async (data) => {
+        let chat = await Chat.find({
+            $or: [
+                { sender_id: data.sender_id, receiver_id: data.receiver_id },
+                { sender_id: data.receiver_id, receiver_id: data.sender_id }
+            ]
+        })
+        socket.emit("loadChat", { chat: chat });
     })
 })
 

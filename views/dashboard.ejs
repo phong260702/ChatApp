@@ -5,7 +5,7 @@
   <div class="col-md-3">
     <ul class="list-group"></ul>
     <% if (users.length > 0) { for (let i =0; i < users.length; i++) { %>
-    <li class="list-group-item list-group-item-dark cursor-pointer user-list">
+    <li class="list-group-item list-group-item-dark cursor-pointer user-list" dota="<%= users[i]["_id"]  %>">
       <img src="<%= users[i]["image"] %>" width="50px", height="50px"> <%=
       users[i]['name'] %> <% if (users[i]['is_online'] == '1') { %>
       <sup class="online-status" id="<%= users[i]["_id"] %>-status">Online</sup>
@@ -19,14 +19,22 @@
   <div class="col-md-9">
     <h3 class="start-head">Click to Start</h3>
     <div class="chat-section">
-      <div id="chat-container"></div>
-      <form action="" id="chat-form">
+      <div id="chat-container">
+        <div class="current-chat">
+          <h5>Hello</h5>
+        </div>
+        <div class="distant-chat">
+          <h5>Hello</h5>
+        </div>
+      </div>
+      <form id="chat-form">
         <input
           type="text"
           name="message"
           placeholder="Type message"
           id="message"
           class="border"
+          value=""
           required
         />
         <input type="submit" value="Send Message" class="btn btn-primary" />
@@ -37,6 +45,7 @@
 
 <script>
   const sender_id = "<%= user._id %>";
+  let receiver_id;
   let socket = io("/user", {
     auth: {
       token: sender_id,
@@ -44,14 +53,17 @@
   });
 
   $(document).ready(function () {
-    $(".user-list").click(() => {
+    $(".user-list").click( function() {
+      receiver_id = $(this).attr("dota");
       $(".start-head").hide();
       $(".chat-section").show();
+
+      socket.emit("existChat", {sender_id: sender_id, receiver_id: receiver_id});
+
     });
   });
 
   socket.on("getOnline", (data) => {
-    console.log("Online");
     $("#"+data.user_id+'-status').text("Online");
     $("#"+data.user_id+'-status').removeClass("offline-status");
     $("#"+data.user_id+'-status').addClass("online-status");
@@ -61,8 +73,62 @@
     $("#"+data.user_id+'-status').text("Offline");
     $("#"+data.user_id+'-status').removeClass("online-status");
     $("#"+data.user_id+'-status').addClass("offline-status");
-    console.log("Offline");
   })
+
+  socket.on("loadNewChat", (data) => {
+    if (sender_id == data.receiver_id && receiver_id == data.sender_id) {
+      let html = '<div class="distant-chat"> <h5>'+ data.message+'</h5> </div>'
+      $("#chat-container").append(html);
+      scrollChat();
+    }
+  })
+
+  socket.on("loadChat", function(data) {
+    $("#chat-container").html('');
+    let chat = data.chat;
+    let html = ''
+    let length = (5 > chat.length) ? length: 5;
+    for (let x =0; x< length; x++) {
+      let addClass = '';
+      if (chat[x]["sender_id"] == sender_id) {
+        addClass = "current-chat";
+      } else {
+        addClass = "distant-class";
+      }
+
+      html += '<div class="'+addClass+'"> <h5>'+ chat[x]["message"]+'</h5> </div>';
+    }
+    $("#chat-container").append(html);
+    scrollChat();
+  });
+
+  $("#chat-form").submit(function(event) {
+    event.preventDefault();
+    const usermessage = $('#message').val();
+    $.ajax({
+      url: "/save-chat",
+      type: "POST",
+      data: {sender_id: sender_id, receiver_id: receiver_id, message: usermessage},
+      success: function(data) {
+        if (data.success) {
+          $("#message").val('');
+          let chat = data.data.message;
+          let html = '<div class="current-chat"> <h5>'+ chat+'</h5> </div>'
+          $("#chat-container").append(html);
+          scrollChat();
+          socket.emit("newChat", data.data);
+        } else {
+          alert(data.msg)
+        }
+      }
+    })
+    })
+
+    function scrollChat() {
+      const messageContainer = document.getElementById("chat-container");
+      messageContainer.scrollTo(0, messageContainer.scrollHeight);
+    }
+
 
 </script>
 

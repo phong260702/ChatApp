@@ -8357,3 +8357,15 @@ a[data-toggle="collapse"] {
 .offline-status {
   color: red;
 }
+
+.current-chat {
+  text-align: right;
+  margin: 10px;
+  color: black;
+}
+
+.distant-chat {
+  text-align: left;
+  margin: 10px;
+  color: teal;
+}
