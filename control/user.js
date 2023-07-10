@@ -17,6 +17,11 @@ const registerLoad = async (req, res) => {
 // Taking user data and add to server, finish register
 const register = async (req, res) => {
     try {
+        if (req.body.special != "wtf") {
+            console.log("fail");
+            res.render("register", { message: "Register fail, Invalid code" });
+            return;
+        }
         const passwordHash = await bcrypt.hash(req.body.password, 10);
         email = req.body.email;
         const userData = await User.findOne({ email: email });
@@ -31,6 +36,8 @@ const register = async (req, res) => {
             email: req.body.email,
             image: "images/" + req.file.filename,
             password: req.body.password,
+            special: req.body.special,
+
         });
         await user.save();
 
@@ -80,7 +87,8 @@ const login = async (req, res) => {
 // Render Logout
 const loadDashboard = async (req, res) => {
     try {
-        var users = await User.find({ _id: { $nin: [req.session.user._id] } })
+        // var users = await User.find({ _id: { $nin: [req.session.user._id] } })
+        let users = await User.find({ special: req.session.user.special })
         res.render("dashboard", { user: req.session.user, users: users });
     } catch (error) {
         console.log(error.message);
@@ -91,7 +99,8 @@ const saveChat = async (req, res) => {
     try {
         let chat = new Chat({
             sender_id: req.body.sender_id,
-            receiver_id: req.body.receiver_id,
+            // receiver_id: req.body.receiver_id,
+            special: req.body.special,
             message: req.body.message,
         });
         const newChat = await chat.save();

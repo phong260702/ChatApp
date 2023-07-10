@@ -14,10 +14,12 @@
     required
   />
   <br /><br />
+  <input type="text" name="special" placeholder="Enter special code" required />
+  <br /><br />
   <input type="submit" value="Register" />
 </form>
 <a href="/">Login</a>
 
-<% if (typeof message !== "undefined") { %>
+<%if (typeof message !== "undefined") { %>
 <p style="color: green"><%= message %></p>
 <%}%>

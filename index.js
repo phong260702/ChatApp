@@ -22,8 +22,11 @@ var usp = io.of("/user");
 usp.on("connection", async (socket) => {
     console.log("User connect: ", socket.id);
     const userId = socket.handshake.auth.token;
+    const groupId = socket.handshake.auth.group;
     await User.findByIdAndUpdate({ _id: userId }, { $set: { is_online: '1' } });
     socket.broadcast.emit("getOnline", { user_id: userId });
+    let chat = await Chat.find({ special: groupId });
+    socket.emit("loadMessage", { chats: chat });
 
     socket.on("disconnect", async () => {
         await User.findByIdAndUpdate({ _id: userId }, { $set: { is_online: '0' } });
@@ -35,15 +38,16 @@ usp.on("connection", async (socket) => {
         socket.broadcast.emit("loadNewChat", data);
     })
 
-    socket.on("existChat", async (data) => {
-        let chat = await Chat.find({
-            $or: [
-                { sender_id: data.sender_id, receiver_id: data.receiver_id },
-                { sender_id: data.receiver_id, receiver_id: data.sender_id }
-            ]
-        })
-        socket.emit("loadChat", { chat: chat });
-    })
+    // socket.on("existChat", async (data) => {
+    //     let chat = await Chat.find({
+    //         // $or: [
+    //         //     { sender_id: data.sender_id, receiver_id: data.receiver_id },
+    //         //     { sender_id: data.receiver_id, receiver_id: data.sender_id }
+    //         // ]
+    //         special: data.special
+    //     })
+    //     socket.emit("loadChat", { chat: chat });
+    // })
 })
 
 http.listen(port, () => {

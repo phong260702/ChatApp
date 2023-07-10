@@ -17,7 +17,7 @@
   </div>
 
   <div class="col-md-9">
-    <h3 class="start-head">Click to Start</h3>
+    <!-- <h3 class="start-head">Click to Start</h3> -->
     <div class="chat-section">
       <div id="chat-container">
         <div class="current-chat">
@@ -46,22 +46,26 @@
 <script>
   const sender_id = "<%= user._id %>";
   let receiver_id;
+  let group_id = "<%= user.special %>";
   let socket = io("/user", {
     auth: {
+      group: group_id,
       token: sender_id,
     },
   });
 
-  $(document).ready(function () {
-    $(".user-list").click( function() {
-      receiver_id = $(this).attr("dota");
-      $(".start-head").hide();
-      $(".chat-section").show();
+//  socket.emit("existChat", {sender_id: sender_id, special: group_id});
 
-      socket.emit("existChat", {sender_id: sender_id, receiver_id: receiver_id});
-
-    });
-  });
+//  $(document).ready(function () {
+//    $(".user-list").click( function() {
+//      receiver_id = $(this).attr("dota");
+//      $(".start-head").hide();
+//      $(".chat-section").show();
+//
+//      socket.emit("existChat", {sender_id: sender_id, receiver_id: receiver_id});
+//
+//    });
+//  });
 
   socket.on("getOnline", (data) => {
     $("#"+data.user_id+'-status').text("Online");
@@ -83,24 +87,26 @@
     }
   })
 
-  socket.on("loadChat", function(data) {
+
+  socket.on("loadMessage", function(data) {
     $("#chat-container").html('');
-    let chat = data.chat;
-    let html = ''
-    let length = (5 > chat.length) ? length: 5;
-    for (let x =0; x< length; x++) {
-      let addClass = '';
+    let chat = data.chats;
+    let html = "";
+    const length = 5 > chat.length ? chat.length : 5;
+    let addClass = '';
+    for (let x =0; x < length; ++x) {
       if (chat[x]["sender_id"] == sender_id) {
         addClass = "current-chat";
       } else {
-        addClass = "distant-class";
+        addClass = "distant-chat"
       }
-
-      html += '<div class="'+addClass+'"> <h5>'+ chat[x]["message"]+'</h5> </div>';
+      html += '<div class="'+addClass+'"> <h5>'+ chat[x]["message"]+'</h5> <span>'+chat[x]["sender_name"]+'</span> </div>';
     }
     $("#chat-container").append(html);
     scrollChat();
-  });
+  })
+
+
 
   $("#chat-form").submit(function(event) {
     event.preventDefault();
@@ -108,12 +114,12 @@
     $.ajax({
       url: "/save-chat",
       type: "POST",
-      data: {sender_id: sender_id, receiver_id: receiver_id, message: usermessage},
+      data: {sender_id: sender_id, special: group_id, message: usermessage},
       success: function(data) {
         if (data.success) {
           $("#message").val('');
-          let chat = data.data.message;
-          let html = '<div class="current-chat"> <h5>'+ chat+'</h5> </div>'
+          let chat = data.data.message
+          let html = '<div class="current-chat"> <h5>'+ chat+'</h5><span>'+data.data.name+'</span> </div>'
           $("#chat-container").append(html);
           scrollChat();
           socket.emit("newChat", data.data);

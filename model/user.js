@@ -21,6 +21,11 @@ const userSchema = mongoose.Schema({
         required: true
     },
 
+    special: {
+        type: String,
+        required: true
+    },
+
     is_online: {
         type: String,
         default: "0"
