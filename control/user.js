@@ -102,6 +102,7 @@ const saveChat = async (req, res) => {
             // receiver_id: req.body.receiver_id,
             special: req.body.special,
             message: req.body.message,
+            sender_name: req.body.sender_name,
         });
         const newChat = await chat.save();
         res.status(200).send({ success: true, msg: "Chat Inserted", data: newChat })

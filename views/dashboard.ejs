@@ -20,12 +20,12 @@
     <!-- <h3 class="start-head">Click to Start</h3> -->
     <div class="chat-section">
       <div id="chat-container">
-        <div class="current-chat">
+        <!-- <div class="current-chat">
           <h5>Hello</h5>
         </div>
         <div class="distant-chat">
           <h5>Hello</h5>
-        </div>
+        </div> -->
       </div>
       <form id="chat-form">
         <input
@@ -47,6 +47,7 @@
   const sender_id = "<%= user._id %>";
   let receiver_id;
   let group_id = "<%= user.special %>";
+  let user_name = "<%= user.name %>"
   let socket = io("/user", {
     auth: {
       group: group_id,
@@ -80,8 +81,10 @@
   })
 
   socket.on("loadNewChat", (data) => {
-    if (sender_id == data.receiver_id && receiver_id == data.sender_id) {
-      let html = '<div class="distant-chat"> <h5>'+ data.message+'</h5> </div>'
+    console.log(data);
+    if (sender_id != data.sender_id && group_id == data.special) {
+      console.log("done");
+      let html = '<div class="distant-chat"> <h5>'+ data.message+'</h5> <span>'+data.sender_name+'</span> </div>'
       $("#chat-container").append(html);
       scrollChat();
     }
@@ -92,9 +95,10 @@
     $("#chat-container").html('');
     let chat = data.chats;
     let html = "";
-    const length = 5 > chat.length ? chat.length : 5;
+    const length = chat.length
+    const start = 10 > length ? 0 : 10
     let addClass = '';
-    for (let x =0; x < length; ++x) {
+    for (let x = length-start; x < length; ++x) {
       if (chat[x]["sender_id"] == sender_id) {
         addClass = "current-chat";
       } else {
@@ -114,12 +118,12 @@
     $.ajax({
       url: "/save-chat",
       type: "POST",
-      data: {sender_id: sender_id, special: group_id, message: usermessage},
+      data: {sender_id: sender_id, special: group_id, message: usermessage, sender_name: user_name},
       success: function(data) {
         if (data.success) {
           $("#message").val('');
           let chat = data.data.message
-          let html = '<div class="current-chat"> <h5>'+ chat+'</h5><span>'+data.data.name+'</span> </div>'
+          let html = '<div class="current-chat"> <h5>'+ chat+'</h5><span>'+data.data.sender_name+'</span> </div>'
           $("#chat-container").append(html);
           scrollChat();
           socket.emit("newChat", data.data);
@@ -129,7 +133,6 @@
       }
     })
     })
-
     function scrollChat() {
       const messageContainer = document.getElementById("chat-container");
       messageContainer.scrollTo(0, messageContainer.scrollHeight);
